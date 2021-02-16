@@ -4,10 +4,9 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.example.mybatis.model.User;
+import org.example.model.User;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class Created {
     public static void main(String[] args) throws IOException {
@@ -22,7 +21,7 @@ public class Created {
          */
         user.setUsername("张柳");
         user.setAddress("北京");
-        int insert = sqlSession.insert("org.example.mymapper.addUser", user);
+        int insert = sqlSession.insert("org.example.mymapper.UserMapper.addUser", user);
         System.out.println(insert);
         sqlSession.commit();
         sqlSession.close();

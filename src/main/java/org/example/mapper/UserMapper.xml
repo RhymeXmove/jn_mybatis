@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.mapper.UserMapper">
+    <sql id="Base_Column">
+        id,username,address
+    </sql>
+
+    <select id="getUserById1" resultType="user">
+        select * from user where id=#{id};
+    </select>
+
+    <select id="getAllUser" resultType="user">
+        select * from user;
+    </select>
+
+    <insert id="addUser" parameterType="user">
+        insert into user (username, address, favorites) values (#{username}, #{address}, #{favorites,typeHandler=org.example.typehandler.List2VarcharHandler});
+    </insert>
+
+    <insert id="addUser2" parameterType="user">
+        insert into user (id, username, address) values (#{id}, #{username}, #{address});
+    </insert>
+
+    <delete id="deleteUserById" parameterType="int">
+        delete from user where id = #{id}
+    </delete>
+
+    <update id="updateUser" parameterType="org.example.model.User">
+        update user
+        <set>
+            <if test="username!=null">
+                username = #{username},
+            </if>
+            <if test="address!=null">
+                address = #{address},
+            </if>
+            <if test="favorites!=null">
+                favorites = #{favorites},
+            </if>
+        </set>
+         where id = #{id}
+    </update>
+
+    <update id="updateUsernameById">
+        update user set username = #{username} where id = #{id}
+    </update>
+
+    <resultMap id="MyResultMap" type="org.example.model.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="address" property="address"/>
+        <result column="favorites" property="favorites"/>
+    </resultMap>
+
+    <select id="getUserById" parameterType="int" resultMap="MyResultMap">
+        select * from user where id = #{id}
+    </select>
+
+    <select id="getUserByPage" resultType="user">
+        select * from user
+        <if test="start!=null and count!=null">
+            limit #{start},#{count}
+        </if>
+    </select>
+
+    <select id="getUserByUsernameAndId" resultType="org.example.model.User">
+        select * from user
+        <where>
+            <if test="id!=null">
+                and id > #{id}
+            </if>
+            <if test="name != null">
+                and username like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getUserByIds" resultType="user">
+        select <include refid="Base_Column"> from user where id in
+        <foreach collection="ids" open="(" close=")" item="id" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <insert id="batchInsertUser">
+        insert into user (username, address) values
+        <foreach collection="users" separator="," item="user">
+            (#{user.username},#{user.address})
+        </foreach>
+    </insert>
+</mapper>
